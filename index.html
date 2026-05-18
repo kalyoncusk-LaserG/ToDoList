@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0e0e12" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="K-CheckList" />
+  <title>K-CheckList</title>
+  <script>
+    const manifest = {
+      name: "K-CheckList", short_name: "K-CheckList",
+      description: "Haftalık görev planlayıcı",
+      start_url: ".", display: "standalone",
+      background_color: "#0e0e12", theme_color: "#0e0e12", orientation: "portrait",
+      icons: [
+        { src: "data:image/png;base64,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", sizes: "192x192", type: "image/png", purpose: "any maskable" },
+        { src: "data:image/png;base64,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", sizes: "512x512", type: "image/png", purpose: "any maskable" }
+      ]
+    };
+    const blob = new Blob([JSON.stringify(manifest)], {type:"application/json"});
+    const link = document.createElement("link");
+    link.rel = "manifest"; link.href = URL.createObjectURL(blob);
+    document.head.appendChild(link);
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+    html,body { height:100%; overflow:hidden; }
+    body { background:#0e0e12; font-family:"Inter",sans-serif; color:#fff; overscroll-behavior:none; display:flex; justify-content:center; }
+    #app { height:100vh; height:100dvh; width:100%; max-width:430px; display:flex; flex-direction:column; overflow:hidden; padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0); }
+
+    .topbar { padding:10px 14px 8px; flex-shrink:0; }
+    .week-nav { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+    .week-arrow { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); border-radius:8px; width:34px; height:34px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:rgba(255,255,255,.5); font-size:1.1rem; user-select:none; flex-shrink:0; }
+    .week-arrow:active { background:rgba(255,255,255,.15); }
+    .week-label { font-family:"Syne",sans-serif; font-size:.88rem; font-weight:700; color:#f59e0b; flex:1; }
+    .today-btn { font-family:"Inter",sans-serif; font-size:.7rem; background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.28); border-radius:8px; color:#f59e0b; padding:5px 10px; cursor:pointer; }
+    .today-btn:active { background:rgba(245,158,11,.2); }
+    .today-btn.hidden { opacity:0; pointer-events:none; }
+    .header-row { display:flex; align-items:flex-end; justify-content:space-between; }
+    .header-title { font-family:"Syne",sans-serif; font-size:1.5rem; font-weight:800; color:#fff; line-height:1; white-space:nowrap; }
+    .header-title span { color:#f59e0b; }
+    .save-ind { font-size:.7rem; padding-bottom:3px; transition:color .3s; }
+
+    .carry-banner { margin:0 14px 8px; display:flex; align-items:center; gap:8px; background:rgba(245,158,11,.07); border:1px solid rgba(245,158,11,.22); border-radius:12px; padding:8px 14px; font-size:.78rem; color:#fbbf24; flex-shrink:0; }
+    .carry-banner.hidden { display:none; }
+    .carry-dot { width:6px; height:6px; border-radius:50%; background:#f59e0b; flex-shrink:0; animation:blink 2s infinite; }
+    @keyframes blink { 0%,100%{opacity:1}50%{opacity:.3} }
+
+    .day-strip { display:flex; gap:8px; padding:0 14px 10px; overflow-x:auto; flex-shrink:0; scrollbar-width:none; }
+    .day-strip::-webkit-scrollbar { display:none; }
+    .day-pill { flex-shrink:0; display:flex; flex-direction:column; align-items:center; gap:5px; padding:10px 12px; border-radius:14px; border:1px solid rgba(255,255,255,.07); background:rgba(255,255,255,.03); cursor:pointer; min-width:52px; }
+    .day-pill:active { background:rgba(255,255,255,.1); }
+    .day-pill.active { background:#f59e0b; border-color:#f59e0b; }
+    .day-pill.today-ring { border-color:rgba(245,158,11,.4); }
+    .day-name { font-family:"Syne",sans-serif; font-size:.74rem; font-weight:700; color:rgba(255,255,255,.5); letter-spacing:.4px; }
+    .day-pill.active .day-name { color:#1a1a1a; }
+    .dots { display:flex; gap:3px; height:5px; align-items:center; }
+    .dot { width:4px; height:4px; border-radius:50%; background:rgba(255,255,255,.2); }
+    .day-pill.active .dot { background:rgba(26,26,26,.35); }
+
+    .card { flex:1; margin:0 10px 12px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:24px; padding:16px; display:flex; flex-direction:column; overflow:hidden; }
+    .card-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; flex-shrink:0; }
+    .day-full { font-family:"Syne",sans-serif; font-size:1.2rem; font-weight:700; color:#fff; }
+    .badge { font-family:"Inter",sans-serif; font-size:.72rem; color:rgba(255,255,255,.35); background:rgba(255,255,255,.06); padding:4px 10px; border-radius:20px; }
+
+    .tabs { display:flex; background:rgba(255,255,255,.05); border-radius:12px; padding:4px; margin-bottom:12px; flex-shrink:0; }
+    .tab { flex:1; padding:9px 0; border:none; background:transparent; border-radius:9px; font-family:"Syne",sans-serif; font-size:.82rem; font-weight:700; color:rgba(255,255,255,.35); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; }
+    .tab.p-active { background:#818cf8; color:#fff; }
+    .tab.w-active { background:#f59e0b; color:#1a1a1a; }
+    .tcnt { display:inline-flex; align-items:center; justify-content:center; width:17px; height:17px; border-radius:50%; font-size:.65rem; background:rgba(255,255,255,.12); }
+    .tab.p-active .tcnt { background:rgba(255,255,255,.25); }
+    .tab.w-active .tcnt { background:rgba(26,26,26,.2); }
+
+    .input-row { display:flex; gap:8px; margin-bottom:10px; flex-shrink:0; }
+    .inp { flex:1; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:12px; padding:12px 14px; color:#fff; font-family:"Inter",sans-serif; font-size:.95rem; outline:none; }
+    .inp::placeholder { color:rgba(255,255,255,.25); }
+    .inp:focus { border-color:rgba(129,140,248,.5); background:rgba(255,255,255,.09); }
+    .inp.w:focus { border-color:rgba(245,158,11,.5); }
+    .add-btn { border:none; border-radius:12px; width:44px; height:44px; font-size:1.4rem; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .add-btn.p { background:#818cf8; color:#fff; }
+    .add-btn.w { background:#f59e0b; color:#1a1a1a; }
+    .add-btn:active { transform:scale(0.93); }
+
+    .list { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:6px; padding-right:2px; }
+    .list::-webkit-scrollbar { width:3px; }
+    .list::-webkit-scrollbar-thumb { background:rgba(255,255,255,.1); border-radius:4px; }
+
+    /* Main task item */
+    .item { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); border-radius:12px; padding:10px 12px; animation:fi .2s ease; flex-shrink:0; }
+    @keyframes fi { from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)} }
+    .item.carried { background:rgba(245,158,11,.06); border-color:rgba(245,158,11,.28); }
+    .item-row { display:flex; align-items:flex-start; gap:10px; }
+    .carried-tag { font-size:.6rem; color:#f59e0b; background:rgba(245,158,11,.14); border:1px solid rgba(245,158,11,.28); border-radius:4px; padding:2px 5px; white-space:nowrap; flex-shrink:0; margin-top:2px; }
+
+    .chk { width:22px; height:22px; border-radius:7px; border:2px solid rgba(255,255,255,.15); flex-shrink:0; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:11px; color:transparent; font-weight:700; margin-top:1px; }
+    .chk.pc { border-color:#818cf8; }
+    .chk.pc.on { background:#818cf8; border-color:#818cf8; color:#fff; }
+    .chk.wc { border-color:#f59e0b; }
+    .chk.wc.on { background:#f59e0b; border-color:#f59e0b; color:#1a1a1a; }
+    .chk.cc { border-color:rgba(245,158,11,.55); }
+    .chk.cc.on { background:#f59e0b; border-color:#f59e0b; color:#1a1a1a; }
+
+    .txt-wrap { flex:1; min-width:0; }
+    .txt { font-size:.88rem; color:rgba(255,255,255,.82); line-height:1.5; word-break:break-word; white-space:pre-wrap; cursor:pointer; }
+    .txt.done { text-decoration:line-through; color:rgba(255,255,255,.25); }
+    .edit-ta { width:100%; background:rgba(255,255,255,.06); border:1px solid rgba(245,158,11,.5); border-radius:8px; color:#fff; font-family:"Inter",sans-serif; font-size:.88rem; outline:none; padding:6px 8px; resize:none; line-height:1.5; min-height:60px; }
+
+    /* Sub-tasks */
+    .subtasks { margin-top:8px; display:flex; flex-direction:column; gap:4px; padding-left:32px; }
+    .sub-item { display:flex; align-items:center; gap:8px; }
+    .sub-chk { width:16px; height:16px; border-radius:4px; border:1.5px solid rgba(255,255,255,.2); flex-shrink:0; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:9px; color:transparent; font-weight:700; }
+    .sub-chk.on { background:rgba(129,140,248,.7); border-color:#818cf8; color:#fff; }
+    .sub-txt { font-size:.82rem; color:rgba(255,255,255,.65); flex:1; word-break:break-word; cursor:pointer; line-height:1.4; }
+    .sub-txt.done { text-decoration:line-through; color:rgba(255,255,255,.25); }
+    .sub-edit { flex:1; background:transparent; border:none; border-bottom:1px solid rgba(245,158,11,.5); color:#fff; font-family:"Inter",sans-serif; font-size:.82rem; outline:none; padding:2px 0; }
+    .sub-del { background:none; border:none; color:rgba(255,255,255,.15); font-size:.8rem; cursor:pointer; padding:3px; }
+    .sub-del:active { color:#f87171; }
+    .add-sub-btn { margin-top:6px; margin-left:32px; background:none; border:1px dashed rgba(255,255,255,.12); border-radius:8px; color:rgba(255,255,255,.3); font-size:.75rem; padding:5px 10px; cursor:pointer; font-family:"Inter",sans-serif; width:fit-content; }
+    .add-sub-btn:active { border-color:rgba(129,140,248,.4); color:#818cf8; }
+
+    .del { background:none; border:none; color:rgba(255,255,255,.15); font-size:.9rem; cursor:pointer; padding:4px; border-radius:6px; line-height:1; flex-shrink:0; }
+    .del:active { color:#f87171; }
+
+    .empty { text-align:center; padding:30px 0; font-size:.85rem; color:rgba(255,255,255,.18); flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+    .ei { font-size:2.2rem; margin-bottom:10px; opacity:.35; }
+
+    .foot { margin-top:10px; display:flex; align-items:center; gap:10px; flex-shrink:0; }
+    .pbar-wrap { flex:1; height:3px; background:rgba(255,255,255,.07); border-radius:4px; overflow:hidden; }
+    .pbar { height:100%; border-radius:4px; transition:width .4s ease; }
+    .pbar.p { background:#818cf8; }
+    .pbar.w { background:#f59e0b; }
+    .clr { font-size:.72rem; background:none; border:none; color:rgba(248,113,113,.5); cursor:pointer; padding:4px 6px; border-radius:6px; }
+    .clr:active { color:#f87171; }
+
+    #install-banner { position:fixed; bottom:0; left:0; right:0; background:linear-gradient(135deg,#1a1a2e,#16213e); border-top:1px solid rgba(245,158,11,.3); padding:16px 20px; display:flex; align-items:center; gap:12px; z-index:100; padding-bottom:calc(16px + env(safe-area-inset-bottom,0)); }
+    #install-banner.hidden { display:none; }
+    .install-text { flex:1; font-size:.82rem; color:rgba(255,255,255,.7); line-height:1.4; }
+    .install-text strong { color:#f59e0b; display:block; font-size:.88rem; margin-bottom:2px; }
+    .install-btn { background:#f59e0b; color:#1a1a1a; border:none; border-radius:10px; padding:10px 16px; font-family:"Syne",sans-serif; font-weight:700; font-size:.82rem; cursor:pointer; white-space:nowrap; flex-shrink:0; }
+    .dismiss-btn { background:none; border:none; color:rgba(255,255,255,.3); font-size:1.1rem; cursor:pointer; padding:4px; }
+  </style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <div class="week-nav">
+      <div class="week-arrow" id="prevWeek">‹</div>
+      <div class="week-label" id="weekLabel"></div>
+      <button class="today-btn hidden" id="todayBtn">Bugün</button>
+      <div class="week-arrow" id="nextWeek">›</div>
+    </div>
+    <div class="header-row">
+      <div class="header-title">K-CheckList</div>
+      <div class="save-ind" id="saveInd" style="color:rgba(255,255,255,.15)">◦ Kayıtlı</div>
+    </div>
+  </div>
+  <div class="carry-banner hidden" id="carryBanner"><div class="carry-dot"></div><span id="carryText"></span></div>
+  <div class="day-strip" id="dayStrip"></div>
+  <div class="card">
+    <div class="card-top">
+      <div class="day-full" id="dayFull"></div>
+      <div class="badge" id="badge"></div>
+    </div>
+    <div class="tabs">
+      <button class="tab p-active" id="tabPersonal" onclick="setTab('Personal')">👤 Personal <span class="tcnt" id="cntPersonal">0</span></button>
+      <button class="tab" id="tabIs" onclick="setTab('İş')">💼 İş <span class="tcnt" id="cntIs">0</span></button>
+    </div>
+    <div class="input-row">
+      <input class="inp" id="todoInput" placeholder="Görev ekle..." />
+      <button class="add-btn p" id="addBtn" onclick="addTodo()">+</button>
+    </div>
+    <div class="list" id="list"></div>
+    <div class="foot" id="foot" style="display:none">
+      <div class="pbar-wrap"><div class="pbar p" id="pbar" style="width:0%"></div></div>
+      <button class="clr" id="clrBtn" style="display:none" onclick="clearDone()">Tamamlananları sil</button>
+    </div>
+  </div>
+</div>
+<div id="install-banner" class="hidden">
+  <div class="install-text"><strong>📱 Ana Ekrana Ekle</strong>Uygulamayı telefonuna yükle!</div>
+  <button class="install-btn" id="installBtn">Yükle</button>
+  <button class="dismiss-btn" onclick="dismissInstall()">✕</button>
+</div>
+
+<script>
+const DAYS=["Pzt","Sal","Çar","Per","Cum","Cmt","Paz"];
+const FULL_DAYS=["Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi","Pazar"];
+const STORAGE_KEY="kchecklist-v2";
+
+function getISOWeek(date){const d=new Date(date);d.setHours(0,0,0,0);d.setDate(d.getDate()+3-((d.getDay()+6)%7));const w1=new Date(d.getFullYear(),0,4);return 1+Math.round(((d-w1)/86400000-3+((w1.getDay()+6)%7))/7);}
+function getMondayOfWeek(year,week){const jan4=new Date(year,0,4);const dow=(jan4.getDay()+6)%7;const mon=new Date(jan4);mon.setDate(jan4.getDate()-dow+(week-1)*7);return mon;}
+function fmt(date,withYear=false){const d=String(date.getDate()).padStart(2,"0");const m=String(date.getMonth()+1).padStart(2,"0");return withYear?`${d}.${m}.${date.getFullYear()}`:`${d}.${m}`;}
+function getWeekLabel(year,week){const mon=getMondayOfWeek(year,week);const sun=new Date(mon);sun.setDate(mon.getDate()+6);return `W${week}: ${fmt(mon)}-${fmt(sun,true)}`;}
+function getMaxWeek(year){return getISOWeek(new Date(year,11,28));}
+function weekKey(y,w){return `${y}-W${w}`;}
+function emptyWeek(){const d={};DAYS.forEach(day=>{d[day]={Personal:[],İş:[]};}); return d;}
+
+const now=new Date();
+const todayIdx=now.getDay()===0?6:now.getDay()-1;
+const curWeek=getISOWeek(now);
+const curYear=now.getFullYear();
+let state={weekNum:curWeek,weekYear:curYear,selectedDay:DAYS[todayIdx],activeTab:"Personal",allWeeks:{}};
+state.allWeeks[weekKey(curYear,curWeek)]=emptyWeek();
+
+function save(){
+  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state.allWeeks));}catch(_){}
+  showSaveStatus("saving");
+  setTimeout(()=>showSaveStatus("saved"),400);
+}
+function load(){
+  try{const raw=localStorage.getItem(STORAGE_KEY);if(raw)state.allWeeks=JSON.parse(raw);}catch(_){}
+}
+function showSaveStatus(s){
+  const el=document.getElementById("saveInd");
+  if(s==="saving"){el.style.color="rgba(255,255,255,.3)";el.textContent="↑ Kaydediliyor";}
+  else if(s==="saved"){el.style.color="#4ade80";el.textContent="✓ Kaydedildi";setTimeout(()=>{el.style.color="rgba(255,255,255,.15)";el.textContent="◦ Kayıtlı";},2000);}
+}
+
+function carryOverTodos(y,w){
+  let pw=w-1,py=y;
+  if(pw<1){py--;pw=getMaxWeek(py);}
+  const pk=weekKey(py,pw);
+  const prev=state.allWeeks[pk];
+  if(!prev) return;
+  const k=weekKey(y,w);
+  if(!state.allWeeks[k]) state.allWeeks[k]=emptyWeek();
+  const cur=state.allWeeks[k];
+  ["Personal","İş"].forEach(tab=>{
+    const existingIds=new Set(cur["Pzt"][tab].filter(t=>t.carriedOver).map(t=>t.originalId||t.id));
+    DAYS.forEach(day=>{
+      const unfinished=(prev[day]?.[tab]||[]).filter(t=>!t.done).filter(t=>!existingIds.has(t.id))
+        .map(t=>{return {...t,carriedOver:true,originalId:t.id,id:Date.now()+Math.random()}});
+      cur["Pzt"][tab]=[...cur["Pzt"][tab],...unfinished];
+    });
+  });
+}
+function ensureWeek(y,w){
+  const k=weekKey(y,w);
+  if(!state.allWeeks[k]) state.allWeeks[k]=emptyWeek();
+  carryOverTodos(y,w);
+}
+function getWeekData(){ensureWeek(state.weekYear,state.weekNum);return state.allWeeks[weekKey(state.weekYear,state.weekNum)];}
+function getTodos(){return (getWeekData()[state.selectedDay]?.[state.activeTab])||[];}
+
+function render(){
+  const isCurrentWeek=state.weekNum===curWeek&&state.weekYear===curYear;
+  document.getElementById("weekLabel").textContent=getWeekLabel(state.weekYear,state.weekNum);
+  const todayBtn=document.getElementById("todayBtn");
+  if(isCurrentWeek) todayBtn.classList.add("hidden"); else todayBtn.classList.remove("hidden");
+
+  const wd=getWeekData();
+  const carriedCount=(wd["Pzt"]?.Personal||[]).filter(t=>t.carriedOver).length+(wd["Pzt"]?.["İş"]||[]).filter(t=>t.carriedOver).length;
+  const banner=document.getElementById("carryBanner");
+  if(state.selectedDay==="Pzt"&&carriedCount>0){banner.classList.remove("hidden");document.getElementById("carryText").textContent=`Geçen haftadan ${carriedCount} tamamlanmamış görev Pazartesi'ye taşındı`;}
+  else banner.classList.add("hidden");
+
+  const strip=document.getElementById("dayStrip");
+  strip.innerHTML="";
+  DAYS.forEach((day,i)=>{
+    const count=(wd[day]?.Personal?.length||0)+(wd[day]?.["İş"]?.length||0);
+    const isToday=isCurrentWeek&&i===todayIdx;
+    const active=state.selectedDay===day;
+    const pill=document.createElement("div");
+    pill.className=`day-pill${active?" active":""}${isToday&&!active?" today-ring":""}`;
+    pill.innerHTML=`<span class="day-name">${day}</span><div class="dots">${Array(Math.min(count||1,3)).fill(0).map(()=>`<div class="dot"${count===0?' style="opacity:.15"':""}></div>`).join("")}</div>`;
+    pill.onclick=()=>{state.selectedDay=day;render();};
+    strip.appendChild(pill);
+  });
+
+  document.getElementById("dayFull").textContent=FULL_DAYS[DAYS.indexOf(state.selectedDay)];
+  const todos=getTodos();
+  const pCount=(wd[state.selectedDay]?.Personal||[]).length;
+  const wCount=(wd[state.selectedDay]?.["İş"]||[]).length;
+  document.getElementById("cntPersonal").textContent=pCount;
+  document.getElementById("cntIs").textContent=wCount;
+  document.getElementById("tabPersonal").className=`tab${state.activeTab==="Personal"?" p-active":""}`;
+  document.getElementById("tabIs").className=`tab${state.activeTab==="İş"?" w-active":""}`;
+
+  const inp=document.getElementById("todoInput");
+  inp.className=`inp${state.activeTab==="İş"?" w":""}`;
+  inp.placeholder=`${FULL_DAYS[DAYS.indexOf(state.selectedDay)]} ${state.activeTab==="Personal"?"kişisel":"iş"} görevi...`;
+  document.getElementById("addBtn").className=`add-btn${state.activeTab==="Personal"?" p":" w"}`;
+
+  const remaining=todos.filter(t=>!t.done).length;
+  document.getElementById("badge").textContent=`${remaining} kaldı`;
+
+  const list=document.getElementById("list");
+  list.innerHTML="";
+  if(todos.length===0){
+    const empty=document.createElement("div");
+    empty.className="empty";
+    empty.innerHTML=`<div class="ei">${state.activeTab==="Personal"?"🌙":"📋"}</div><div>Henüz görev yok</div>`;
+    list.appendChild(empty);
+  } else {
+    todos.forEach(todo=>{
+      const isP=state.activeTab==="Personal";
+      const isC=!!todo.carriedOver;
+      const item=document.createElement("div");
+      item.className=`item${isC?" carried":""}`;
+
+      // Main row
+      const row=document.createElement("div");
+      row.className="item-row";
+
+      const chk=document.createElement("div");
+      chk.className=`chk ${isC?"cc":isP?"pc":"wc"}${todo.done?" on":""}`;
+      chk.textContent=todo.done?"✓":"";
+      chk.onclick=()=>toggleTodo(todo.id);
+
+      const txtWrap=document.createElement("div");
+      txtWrap.className="txt-wrap";
+
+      const txt=document.createElement("div");
+      txt.className=`txt${todo.done?" done":""}`;
+      txt.textContent=todo.text;
+      txt.onclick=()=>startEdit(todo.id,txt);
+      txtWrap.appendChild(txt);
+
+      const del=document.createElement("button");
+      del.className="del"; del.textContent="✕";
+      del.onclick=()=>deleteTodo(todo.id);
+
+      row.appendChild(chk);
+      row.appendChild(txtWrap);
+      if(isC){const tag=document.createElement("span");tag.className="carried-tag";tag.textContent="◈ önceki hafta";row.appendChild(tag);}
+      row.appendChild(del);
+      item.appendChild(row);
+
+      // Sub-tasks
+      if(todo.subtasks&&todo.subtasks.length>0){
+        const subsEl=document.createElement("div");
+        subsEl.className="subtasks";
+        todo.subtasks.forEach(sub=>{
+          const subRow=document.createElement("div");
+          subRow.className="sub-item";
+          const sChk=document.createElement("div");
+          sChk.className=`sub-chk${sub.done?" on":""}`;
+          sChk.textContent=sub.done?"✓":"";
+          sChk.onclick=()=>toggleSubtask(todo.id,sub.id);
+          const sTxt=document.createElement("span");
+          sTxt.className=`sub-txt${sub.done?" done":""}`;
+          sTxt.textContent=sub.text;
+          sTxt.onclick=()=>startSubEdit(todo.id,sub.id,sTxt);
+          const sDel=document.createElement("button");
+          sDel.className="sub-del"; sDel.textContent="✕";
+          sDel.onclick=()=>deleteSubtask(todo.id,sub.id);
+          subRow.appendChild(sChk); subRow.appendChild(sTxt); subRow.appendChild(sDel);
+          subsEl.appendChild(subRow);
+        });
+        item.appendChild(subsEl);
+      }
+
+      // Add subtask button
+      const addSubBtn=document.createElement("button");
+      addSubBtn.className="add-sub-btn";
+      addSubBtn.textContent="+ Alt görev";
+      addSubBtn.onclick=()=>addSubtask(todo.id);
+      item.appendChild(addSubBtn);
+
+      list.appendChild(item);
+    });
+  }
+
+  const foot=document.getElementById("foot");
+  if(todos.length>0){
+    foot.style.display="flex";
+    const done=todos.filter(t=>t.done).length;
+    document.getElementById("pbar").style.width=`${(done/todos.length)*100}%`;
+    document.getElementById("pbar").className=`pbar${state.activeTab==="Personal"?" p":" w"}`;
+    document.getElementById("clrBtn").style.display=todos.some(t=>t.done)?"block":"none";
+  } else foot.style.display="none";
+}
+
+function escHtml(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+// ---- Edit main task ----
+function startEdit(id, txtEl){
+  const k=weekKey(state.weekYear,state.weekNum);
+  const todo=state.allWeeks[k][state.selectedDay][state.activeTab].find(t=>t.id===id);
+  if(!todo) return;
+  const ta=document.createElement("textarea");
+  ta.className="edit-ta";
+  ta.value=todo.text;
+  ta.rows=Math.max(2, todo.text.split("\n").length+1);
+  txtEl.replaceWith(ta);
+  ta.focus();
+  // Auto-resize
+  ta.addEventListener("input",()=>{ta.style.height="auto";ta.style.height=ta.scrollHeight+"px";});
+  ta.style.height="auto"; ta.style.height=ta.scrollHeight+"px";
+  function finish(){
+    const newText=ta.value.trim();
+    if(newText){todo.text=newText; save();}
+    render();
+  }
+  ta.onblur=finish;
+  // Allow Enter for newlines, Escape to cancel
+  ta.onkeydown=e=>{if(e.key==="Escape"){ta.onblur=null;render();}};
+}
+
+// ---- Subtask actions ----
+function addSubtask(todoId){
+  const k=weekKey(state.weekYear,state.weekNum);
+  const todo=state.allWeeks[k][state.selectedDay][state.activeTab].find(t=>t.id===todoId);
+  if(!todo) return;
+  if(!todo.subtasks) todo.subtasks=[];
+  todo.subtasks.push({id:Date.now()+Math.random(),text:"Yeni alt görev",done:false});
+  save(); render();
+  // Immediately open edit on the new subtask
+  setTimeout(()=>{
+    const items=document.querySelectorAll(".sub-txt");
+    const last=items[items.length-1];
+    if(last) last.click();
+  },50);
+}
+
+function toggleSubtask(todoId,subId){
+  const k=weekKey(state.weekYear,state.weekNum);
+  const todo=state.allWeeks[k][state.selectedDay][state.activeTab].find(t=>t.id===todoId);
+  if(!todo||!todo.subtasks) return;
+  const sub=todo.subtasks.find(s=>s.id===subId);
+  if(sub) sub.done=!sub.done;
+  save(); render();
+}
+
+function deleteSubtask(todoId,subId){
+  const k=weekKey(state.weekYear,state.weekNum);
+  const todo=state.allWeeks[k][state.selectedDay][state.activeTab].find(t=>t.id===todoId);
+  if(!todo||!todo.subtasks) return;
+  todo.subtasks=todo.subtasks.filter(s=>s.id!==subId);
+  save(); render();
+}
+
+function startSubEdit(todoId,subId,sTxtEl){
+  const k=weekKey(state.weekYear,state.weekNum);
+  const todo=state.allWeeks[k][state.selectedDay][state.activeTab].find(t=>t.id===todoId);
+  if(!todo) return;
+  const sub=todo.subtasks.find(s=>s.id===subId);
+  if(!sub) return;
+  const ta=document.createElement("textarea");
+  ta.className="edit-ta";
+  ta.value=sub.text;
+  ta.style.minHeight="40px";
+  ta.rows=Math.max(2,sub.text.split("\n").length+1);
+  sTxtEl.replaceWith(ta); ta.focus(); ta.select();
+  ta.addEventListener("input",()=>{ta.style.height="auto";ta.style.height=ta.scrollHeight+"px";});
+  ta.style.height="auto"; ta.style.height=ta.scrollHeight+"px";
+  function finish(){const v=ta.value.trim();if(v){sub.text=v;save();}render();}
+  ta.onblur=finish;
+  ta.onkeydown=e=>{if(e.key==="Escape"){ta.onblur=null;render();}};
+}
+
+// ---- Main actions ----
+function addTodo(){
+  const inp=document.getElementById("todoInput");
+  const text=inp.value.trim();
+  if(!text) return;
+  const k=weekKey(state.weekYear,state.weekNum);
+  state.allWeeks[k][state.selectedDay][state.activeTab].unshift({id:Date.now(),text,done:false,carriedOver:false,subtasks:[]});
+  inp.value=""; save(); render();
+}
+function toggleTodo(id){
+  const k=weekKey(state.weekYear,state.weekNum);
+  const t=state.allWeeks[k][state.selectedDay][state.activeTab].find(t=>t.id===id);
+  if(t) t.done=!t.done; save(); render();
+}
+function deleteTodo(id){
+  const k=weekKey(state.weekYear,state.weekNum);
+  state.allWeeks[k][state.selectedDay][state.activeTab]=state.allWeeks[k][state.selectedDay][state.activeTab].filter(t=>t.id!==id);
+  save(); render();
+}
+function clearDone(){
+  const k=weekKey(state.weekYear,state.weekNum);
+  state.allWeeks[k][state.selectedDay][state.activeTab]=state.allWeeks[k][state.selectedDay][state.activeTab].filter(t=>!t.done);
+  save(); render();
+}
+function setTab(tab){state.activeTab=tab;render();}
+
+document.getElementById("prevWeek").onclick=()=>{
+  if(state.weekNum===1){const py=state.weekYear-1;state.weekYear=py;state.weekNum=getMaxWeek(py);}
+  else state.weekNum--;
+  state.selectedDay="Pzt"; ensureWeek(state.weekYear,state.weekNum); render();
+};
+document.getElementById("nextWeek").onclick=()=>{
+  const max=getMaxWeek(state.weekYear);
+  if(state.weekNum===max){state.weekYear++;state.weekNum=1;}
+  else state.weekNum++;
+  state.selectedDay="Pzt"; ensureWeek(state.weekYear,state.weekNum); render();
+};
+document.getElementById("todayBtn").onclick=()=>{state.weekNum=curWeek;state.weekYear=curYear;state.selectedDay=DAYS[todayIdx];render();};
+document.getElementById("todoInput").addEventListener("keydown",e=>{if(e.key==="Enter")addTodo();});
+
+let deferredPrompt=null;
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;document.getElementById("install-banner").classList.remove("hidden");});
+document.getElementById("installBtn").onclick=async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();const{outcome}=await deferredPrompt.userChoice;deferredPrompt=null;document.getElementById("install-banner").classList.add("hidden");};
+function dismissInstall(){document.getElementById("install-banner").classList.add("hidden");}
+window.addEventListener("appinstalled",()=>document.getElementById("install-banner").classList.add("hidden"));
+
+if("serviceWorker" in navigator){
+  const swCode=`const CACHE="kcl-v1";self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(["/"])));self.skipWaiting();});self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim();});self.addEventListener("fetch",e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).catch(()=>caches.match("/"))));}); `;
+  const swBlob=new Blob([swCode],{type:"application/javascript"});
+  navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
+}
+
+load(); render();
+</script>
+</body>
+</html>
