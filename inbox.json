@@ -6,6 +6,14 @@
       "tab": "I",
       "pri": "green",
       "text": "Test: asistan bağlantısı çalışıyor ✓"
+    },
+    {
+      "id": "2026-10-18-002",
+      "date": "2026-10-18",
+      "tab": "I",
+      "pri": "red",
+      "text": "Bekleyen mutabakat kaydını yanıtla",
+      "subs": ["Mutabık / mutabık değil seç", "Hatırlatmalar geliyor, süresi geçti"]
     }
   ]
 }
