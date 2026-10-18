@@ -443,7 +443,22 @@ window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();dp=e;docume
 document.getElementById("installBtn").onclick=async()=>{if(!dp)return;dp.prompt();await dp.userChoice;dp=null;document.getElementById("ibanner").classList.add("hidden");};
 window.addEventListener("appinstalled",()=>document.getElementById("ibanner").classList.add("hidden"));
 if("serviceWorker"in navigator){const sc="const C='kcl3';self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['/'])));self.skipWaiting()});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))));self.clients.claim()});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).catch(()=>caches.match('/'))))})";navigator.serviceWorker.register(URL.createObjectURL(new Blob([sc],{type:"application/javascript"}))).catch(()=>{});}
-load();render();
+const IK="kcl-imported";
+async function importInbox(){
+  let seen;try{seen=new Set(JSON.parse(localStorage.getItem(IK)||"[]"));}catch(_){seen=new Set();}
+  let data;try{const r=await fetch("inbox.json?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;data=await r.json();}catch(_){return;}
+  let n=0;
+  (data.tasks||[]).forEach(t=>{
+    if(!t.id||!t.text||!t.date||seen.has(t.id))return;
+    const p=String(t.date).split("-").map(Number);const d=new Date(p[0],p[1]-1,p[2]);if(isNaN(d))return;
+    const k=wk(d.getFullYear(),isoWeek(d));if(!S.allW[k])S.allW[k]=emptyW();
+    const tab=t.tab==="P"?"P":"I";
+    S.allW[k][DAYS[(d.getDay()+6)%7]][tab].unshift({id:Date.now()+Math.random(),text:String(t.text),done:false,co:false,subs:(t.subs||[]).map(s=>({id:Date.now()+Math.random(),text:String(s),done:false})),pri:["red","yellow","green"].includes(t.pri)?t.pri:"none"});
+    seen.add(t.id);n++;
+  });
+  if(n){try{localStorage.setItem(IK,JSON.stringify([...seen]));}catch(_){}save();render();}
+}
+load();render();importInbox();
 </script>
 </body>
 </html>
