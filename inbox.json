@@ -13,7 +13,24 @@
       "tab": "I",
       "pri": "red",
       "text": "Bekleyen mutabakat kaydını yanıtla",
-      "subs": ["Mutabık / mutabık değil seç", "Hatırlatmalar geliyor, süresi geçti"]
+      "subs": [
+        "Mutabık / mutabık değil seç",
+        "Hatırlatmalar geliyor, süresi geçti"
+      ]
+    },
+    {
+      "id": "2026-10-20-001",
+      "date": "2026-10-20",
+      "tab": "I",
+      "pri": "yellow",
+      "text": "Yarınki çevrim içi destek bilgilendirmesine katılım için kayıt ol"
+    },
+    {
+      "id": "2026-10-20-002",
+      "date": "2026-10-20",
+      "tab": "I",
+      "pri": "green",
+      "text": "Gelen hizmet değerlendirme anketini doldur"
     }
   ]
 }
