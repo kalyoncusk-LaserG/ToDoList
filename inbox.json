@@ -31,6 +31,23 @@
       "tab": "I",
       "pri": "green",
       "text": "Gelen hizmet değerlendirme anketini doldur"
+    },
+    {
+      "id": "2026-10-21-001",
+      "date": "2026-10-21",
+      "tab": "I",
+      "pri": "red",
+      "text": "Bugünkü yüz yüze bilgilendirme toplantısına katılım kararı ver",
+      "subs": [
+        "Aynı saatte çevrim içi etkinlikle çakışıyor"
+      ]
+    },
+    {
+      "id": "2026-10-21-002",
+      "date": "2026-10-21",
+      "tab": "I",
+      "pri": "yellow",
+      "text": "Cuma günkü çevrim içi destek programı toplantısına katılım kararı ver"
     }
   ]
 }
