@@ -48,6 +48,20 @@
       "tab": "I",
       "pri": "yellow",
       "text": "Cuma günkü çevrim içi destek programı toplantısına katılım kararı ver"
+    },
+    {
+      "id": "2026-10-22-001",
+      "date": "2026-10-22",
+      "tab": "I",
+      "pri": "yellow",
+      "text": "Gelen resmi borç durum yazısını incele ve dosyala"
+    },
+    {
+      "id": "2026-10-22-002",
+      "date": "2026-10-22",
+      "tab": "I",
+      "pri": "green",
+      "text": "Gelen çağrı duyurusunu incele, uygunluğunu değerlendir"
     }
   ]
 }
