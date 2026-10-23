@@ -62,6 +62,34 @@
       "tab": "I",
       "pri": "green",
       "text": "Gelen çağrı duyurusunu incele, uygunluğunu değerlendir"
+    },
+    {
+      "id": "2026-10-23-001",
+      "date": "2026-10-23",
+      "tab": "I",
+      "pri": "red",
+      "text": "Kredi kartı ödeme gecikmesi bildirimini kontrol et, gerekirse öde"
+    },
+    {
+      "id": "2026-10-23-002",
+      "date": "2026-10-23",
+      "tab": "I",
+      "pri": "red",
+      "text": "Bugünkü çevrim içi destek programı toplantısına katılım kararı ver"
+    },
+    {
+      "id": "2026-10-23-003",
+      "date": "2026-10-23",
+      "tab": "I",
+      "pri": "yellow",
+      "text": "Yarınki planlı elektrik kesintisi için cihaz önlemlerini al"
+    },
+    {
+      "id": "2026-10-23-004",
+      "date": "2026-10-23",
+      "tab": "I",
+      "pri": "yellow",
+      "text": "Pazartesi günkü çevrim içi bilgilendirme toplantısına kayıt ol"
     }
   ]
 }
