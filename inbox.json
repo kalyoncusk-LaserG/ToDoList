@@ -90,6 +90,20 @@
       "tab": "I",
       "pri": "yellow",
       "text": "Pazartesi günkü çevrim içi bilgilendirme toplantısına kayıt ol"
+    },
+    {
+      "id": "2026-10-24-001",
+      "date": "2026-10-24",
+      "tab": "I",
+      "pri": "green",
+      "text": "Ücretsiz stand katılım başvurusunu değerlendir"
+    },
+    {
+      "id": "2026-10-24-002",
+      "date": "2026-10-24",
+      "tab": "P",
+      "pri": "green",
+      "text": "Site yönetimi ödeme çağrısını oku ve ödeme durumunu kontrol et"
     }
   ]
 }
