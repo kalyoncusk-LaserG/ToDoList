@@ -112,5 +112,13 @@
       "pri": "yellow",
       "text": "Destek programı webinar kaydını izle, gerekli belgeyi yönetici şirketten talep et"
     }
+  ],
+  "commands": [
+    {
+      "id": "cmd-2026-10-25-001",
+      "action": "clear",
+      "date": "2026-10-25",
+      "tab": "I"
+    }
   ]
 }

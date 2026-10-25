@@ -263,10 +263,24 @@ function carryDay(y,w,di){
   if(!prevData)return;
   ["P","I"].forEach(tab=>{
     const existing=new Set((S.allW[k][DAYS[di]][tab]||[]).filter(t=>t.co).map(t=>t.oid||t.id));
-    const unf=((prevData[prevDay]&&prevData[prevDay][tab])||[]).filter(t=>!t.done).filter(t=>!existing.has(t.id))
+    const xs=new Set(S.allW[k][DAYS[di]]["x"+tab]||[]);
+    const unf=((prevData[prevDay]&&prevData[prevDay][tab])||[]).filter(t=>!t.done).filter(t=>!existing.has(t.id)&&!xs.has(t.id))
       .map(t=>({...t,co:true,oid:t.id,id:Date.now()+Math.random()}));
     S.allW[k][DAYS[di]][tab]=[...S.allW[k][DAYS[di]][tab],...unf];
   });
+}
+// Silinen tasinmis gorevleri kaydet ki carryDay onlari geri getirmesin
+function dismiss(k,day,tab,items){const d=S.allW[k][day];const ids=items.filter(t=>t.co&&t.oid!=null).map(t=>t.oid);if(ids.length)d["x"+tab]=[...(d["x"+tab]||[]),...ids];}
+function clearFrom(ds,tab){
+  const p=String(ds).split("-").map(Number);const d=new Date(p[0],p[1]-1,p[2]);if(isNaN(d))return;
+  const end=new Date();end.setHours(0,0,0,0);let removed=null;
+  do{
+    const y=d.getFullYear(),w=isoWeek(d),k=wk(y,w);ensureW(y,w);
+    const day=DAYS[(d.getDay()+6)%7];const list=S.allW[k][day][tab]||[];
+    const rm=removed===null?list:list.filter(t=>t.co&&removed.has(t.oid));
+    dismiss(k,day,tab,rm);S.allW[k][day][tab]=list.filter(t=>!rm.includes(t));
+    removed=new Set(rm.map(t=>t.id));d.setDate(d.getDate()+1);
+  }while(d<=end);
 }
 function ensureW(y,w){
   const k=wk(y,w);if(!S.allW[k])S.allW[k]=emptyW();
@@ -401,11 +415,11 @@ function doMove(copy){
   const todo=srcList.find(t=>t.id===moveState.id);if(!todo){closeModal("moveModal");return;}
   const newTodo={...todo,id:Date.now()+Math.random(),co:false};
   S.allW[k][moveState.targetDay][moveState.srcTab].push(newTodo);
-  if(!copy)S.allW[k][moveState.srcDay][moveState.srcTab]=srcList.filter(t=>t.id!==todo.id);
+  if(!copy){dismiss(k,moveState.srcDay,moveState.srcTab,[todo]);S.allW[k][moveState.srcDay][moveState.srcTab]=srcList.filter(t=>t.id!==todo.id);}
   save();closeModal("moveModal");render();
 }
 function showMgmt(){document.getElementById("mgmtModal").classList.remove("hidden");}
-function deleteDayTodos(){const k=wk(S.wy,S.wn);S.allW[k][S.day][S.tab]=[];save();closeModal("mgmtModal");render();}
+function deleteDayTodos(){const k=wk(S.wy,S.wn);dismiss(k,S.day,S.tab,S.allW[k][S.day][S.tab]);S.allW[k][S.day][S.tab]=[];save();closeModal("mgmtModal");render();}
 function showDeleteDays(){
   closeModal("mgmtModal");delSel=new Set();
   const db=document.getElementById("delDaysBtns");db.innerHTML="";
@@ -416,12 +430,12 @@ function showDeleteDays(){
   });
   document.getElementById("delModal").classList.remove("hidden");
 }
-function doDeleteDays(){const k=wk(S.wy,S.wn);delSel.forEach(day=>{S.allW[k][day][S.tab]=[];});save();closeModal("delModal");render();}
-function deleteAllTodos(){const k=wk(S.wy,S.wn);DAYS.forEach(day=>{S.allW[k][day][S.tab]=[];});save();closeModal("mgmtModal");render();}
+function doDeleteDays(){const k=wk(S.wy,S.wn);delSel.forEach(day=>{dismiss(k,day,S.tab,S.allW[k][day][S.tab]);S.allW[k][day][S.tab]=[];});save();closeModal("delModal");render();}
+function deleteAllTodos(){const k=wk(S.wy,S.wn);DAYS.forEach(day=>{dismiss(k,day,S.tab,S.allW[k][day][S.tab]);S.allW[k][day][S.tab]=[];});save();closeModal("mgmtModal");render();}
 function closeModal(id){document.getElementById(id).classList.add("hidden");}
 function addTodo(){const ti=document.getElementById("ti");const text=ti.value.trim();if(!text)return;const k=wk(S.wy,S.wn);S.allW[k][S.day][S.tab].unshift({id:Date.now(),text,done:false,co:false,subs:[],pri:"none"});ti.value="";save();render();}
 function toggleTodo(id){const t=getTodo(id);if(t){t.done=!t.done;save();render();}}
-function deleteTodo(id){const k=wk(S.wy,S.wn);S.allW[k][S.day][S.tab]=S.allW[k][S.day][S.tab].filter(t=>t.id!==id);save();render();}
+function deleteTodo(id){const k=wk(S.wy,S.wn);dismiss(k,S.day,S.tab,S.allW[k][S.day][S.tab].filter(t=>t.id===id));S.allW[k][S.day][S.tab]=S.allW[k][S.day][S.tab].filter(t=>t.id!==id);save();render();}
 function clearDone(){const k=wk(S.wy,S.wn);S.allW[k][S.day][S.tab]=S.allW[k][S.day][S.tab].filter(t=>!t.done);save();render();}
 function setTab(t){S.tab=t;render();}
 function addSub(tid){const t=getTodo(tid);if(!t)return;if(!t.subs)t.subs=[];t.subs.push({id:Date.now()+Math.random(),text:"Yeni alt gorev",done:false});save();render();setTimeout(()=>{const els=document.querySelectorAll(".stxt");if(els.length)els[els.length-1].click();},50);}
@@ -455,6 +469,12 @@ async function importInbox(){
     const tab=t.tab==="P"?"P":"I";
     S.allW[k][DAYS[(d.getDay()+6)%7]][tab].unshift({id:Date.now()+Math.random(),text:String(t.text),done:false,co:false,subs:(t.subs||[]).map(s=>({id:Date.now()+Math.random(),text:String(s),done:false})),pri:["red","yellow","green"].includes(t.pri)?t.pri:"none"});
     seen.add(t.id);n++;
+  });
+  // Uzaktan komutlar (bir kez calisir): {"id":"...","action":"clear","date":"YYYY-MM-DD","tab":"I"}
+  (data.commands||[]).forEach(c=>{
+    if(!c.id||seen.has(c.id))return;
+    if(c.action==="clear"&&c.date)clearFrom(c.date,c.tab==="P"?"P":"I");
+    seen.add(c.id);n++;
   });
   if(n){try{localStorage.setItem(IK,JSON.stringify([...seen]));}catch(_){}save();render();}
 }
