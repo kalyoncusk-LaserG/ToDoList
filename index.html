@@ -297,7 +297,9 @@ function ensureW(y,w){
     if(S.allW[wk(py,pw)])for(let i=1;i<=6;i++)carryDay(py,pw,i);
     carryDay(y,w,0);
   }
-  const upTo=isCur?tIdx:6;
+  // Devir sadece gunu gelince yapilir: gecmis haftalar tum gunler, bu hafta bugune kadar, gelecek haftalar hic
+  const isPast=y<cY||(y===cY&&w<cW);
+  const upTo=isCur?tIdx:(isPast?6:0);
   for(let i=1;i<=upTo;i++)carryDay(y,w,i);
 }
 function wd(){ensureW(S.wy,S.wn);return S.allW[wk(S.wy,S.wn)];}
@@ -505,15 +507,27 @@ async function importInbox(){
   });
   if(n){try{localStorage.setItem(IK,JSON.stringify([...seen]));}catch(_){}save();render();}
 }
+// Gelecek gunlere onceden yapilmis devir kopyalarini (co) temizle; tasinan/eklenen gorevler kalir
+function pruneFuture(){
+  const today=new Date(now);today.setHours(0,0,0,0);let ch=false;
+  Object.keys(S.allW).forEach(k=>{
+    const m=/^(\d+)-W(\d+)$/.exec(k);if(!m)return;const mon=monday(+m[1],+m[2]);
+    DAYS.forEach((day,i)=>{
+      const d=new Date(mon);d.setDate(mon.getDate()+i);if(d<=today||!S.allW[k][day])return;
+      ["P","I"].forEach(tab=>{const l=S.allW[k][day][tab]||[];const f=l.filter(t=>!t.co);if(f.length!==l.length){S.allW[k][day][tab]=f;ch=true;}});
+    });
+  });
+  if(ch)save();
+}
 function refreshToday(){
   const n=new Date();if(n.toDateString()===now.toDateString())return;
   now=n;tIdx=n.getDay()===0?6:n.getDay()-1;cW=isoWeek(n);cY=n.getFullYear();
-  S.wn=cW;S.wy=cY;S.day=DAYS[tIdx];render();
+  S.wn=cW;S.wy=cY;S.day=DAYS[tIdx];pruneFuture();render();
 }
 document.addEventListener("visibilitychange",()=>{if(!document.hidden){refreshToday();importInbox();}});
 window.addEventListener("focus",refreshToday);
 setInterval(refreshToday,60000);
-load();render();importInbox();
+load();pruneFuture();render();importInbox();
 </script>
 </body>
 </html>
