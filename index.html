@@ -90,7 +90,7 @@ body{background:#0e0e12;font-family:"Inter",sans-serif;color:#fff;overscroll-beh
 .txt.done{text-decoration:line-through;color:rgba(255,255,255,.3)}
 .edit-ta{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(245,158,11,.5);border-radius:8px;color:#fff;font-family:"Inter",sans-serif;font-size:.86rem;outline:none;padding:6px 8px;resize:none;line-height:1.5;min-height:50px}
 .ibtns{display:flex;flex-direction:column;gap:3px;flex-shrink:0}
-.ibtn2{background:none;border:none;color:rgba(255,255,255,.15);font-size:.85rem;cursor:pointer;padding:3px;line-height:1}
+.ibtn2{background:none;border:none;color:rgba(255,255,255,.4);font-size:.85rem;cursor:pointer;padding:3px;line-height:1}
 .ibtn2:active{color:#818cf8}
 .del{background:none;border:none;color:rgba(255,255,255,.15);font-size:.85rem;cursor:pointer;padding:3px;line-height:1}
 .del:active{color:#f87171}
@@ -128,6 +128,10 @@ body{background:#0e0e12;font-family:"Inter",sans-serif;color:#fff;overscroll-beh
 .modal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:12px}
 .mday{border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);border-radius:9px;padding:7px 3px;text-align:center;cursor:pointer;font-size:.7rem;color:rgba(255,255,255,.6);font-family:"Syne",sans-serif;font-weight:700}
 .mday.sel{background:#818cf8;border-color:#818cf8;color:#fff}
+.mday small{display:block;font-weight:400;opacity:.6;font-size:.6rem;margin-top:2px}
+.mday.src{border-style:dashed}
+.mwk{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;color:rgba(255,255,255,.6);font-size:.75rem}
+.mnav{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;border-radius:8px;width:34px;height:28px;cursor:pointer;font-size:1rem}
 .mday:active{background:rgba(129,140,248,.4)}
 .modal-btns{display:flex;gap:8px}
 .mbtn{flex:1;padding:11px;border:none;border-radius:11px;font-family:"Syne",sans-serif;font-weight:700;font-size:.85rem;cursor:pointer}
@@ -186,6 +190,7 @@ body{background:#0e0e12;font-family:"Inter",sans-serif;color:#fff;overscroll-beh
 <div class="modal-bg hidden" id="moveModal">
   <div class="modal">
     <h3>Gorevi hangi gune tasiyalim?</h3>
+    <div class="mwk"><button class="mnav" onclick="moveWeek(-1)">&#8249;</button><span id="moveWk"></span><button class="mnav" onclick="moveWeek(1)">&#8250;</button></div>
     <div class="modal-days" id="moveDays"></div>
     <div style="display:flex;gap:6px;margin-bottom:10px">
       <button class="mbtn confirm" onclick="doMove(false)">Tasi</button>
@@ -233,9 +238,9 @@ function maxW(y){return isoWeek(new Date(y,11,28));}
 function wk(y,w){return y+"-W"+w;}
 function emptyW(){const d={};DAYS.forEach(day=>{d[day]={P:[],I:[]}});return d;}
 
-const now=new Date();
-const tIdx=now.getDay()===0?6:now.getDay()-1;
-const cW=isoWeek(now),cY=now.getFullYear();
+let now=new Date();
+let tIdx=now.getDay()===0?6:now.getDay()-1;
+let cW=isoWeek(now),cY=now.getFullYear();
 let S={wn:cW,wy:cY,day:DAYS[tIdx],tab:"P",allW:{}};
 S.allW[wk(cY,cW)]=emptyW();
 let moveState={id:null,srcDay:null,srcTab:null,targetDay:null};
@@ -285,9 +290,15 @@ function clearFrom(ds,tab){
 function ensureW(y,w){
   const k=wk(y,w);if(!S.allW[k])S.allW[k]=emptyW();
   const isCur=w===cW&&y===cY;
+  // Bu hafta: once onceki haftanin gunleri Pazar'a kadar tamamlanir, sonra Pazar -> Pazartesi tasinir.
+  // Sadece bu hafta icin ve 2026-W44'ten itibaren yapilir; eski haftalardaki gorevler geriye donuk tasinmaz.
+  if(isCur&&y*100+w>=202644){
+    let pw=w-1,py=y;if(pw<1){py--;pw=maxW(py);}
+    if(S.allW[wk(py,pw)])for(let i=1;i<=6;i++)carryDay(py,pw,i);
+    carryDay(y,w,0);
+  }
   const upTo=isCur?tIdx:6;
   for(let i=1;i<=upTo;i++)carryDay(y,w,i);
-  if(isCur&&tIdx===0)carryDay(y,w,0);
 }
 function wd(){ensureW(S.wy,S.wn);return S.allW[wk(S.wy,S.wn)];}
 function todos(){return (wd()[S.day]&&wd()[S.day][S.tab])||[];}
@@ -399,23 +410,39 @@ function togglePriPicker(id,itemEl){
   itemEl.appendChild(pp);
 }
 function openMove(id){
-  moveState={id,srcDay:S.day,srcTab:S.tab,targetDay:null};
-  const md=document.getElementById("moveDays");md.innerHTML="";
-  DAYS.forEach(day=>{
-    const b=document.createElement("div");b.className="mday"+(day===S.day?" sel":"");b.textContent=day;
-    b.onclick=()=>{moveState.targetDay=day;md.querySelectorAll(".mday").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");};
-    md.appendChild(b);
-  });
+  moveState={id,srcY:S.wy,srcW:S.wn,srcDay:S.day,srcTab:S.tab,vy:S.wy,vw:S.wn,ty:null,tw:null,targetDay:null};
+  renderMoveDays();
   document.getElementById("moveModal").classList.remove("hidden");
 }
+function renderMoveDays(){
+  const ms=moveState,md=document.getElementById("moveDays");md.innerHTML="";
+  document.getElementById("moveWk").textContent=wlabel(ms.vy,ms.vw);
+  const m=monday(ms.vy,ms.vw);
+  DAYS.forEach((day,i)=>{
+    const d=new Date(m);d.setDate(m.getDate()+i);
+    const isSel=ms.ty===ms.vy&&ms.tw===ms.vw&&ms.targetDay===day,isSrc=ms.srcY===ms.vy&&ms.srcW===ms.vw&&ms.srcDay===day;
+    const b=document.createElement("div");b.className="mday"+(isSel?" sel":"")+(isSrc?" src":"");
+    b.innerHTML=day+"<small>"+fd(d)+"</small>";
+    b.onclick=()=>{ms.ty=ms.vy;ms.tw=ms.vw;ms.targetDay=day;renderMoveDays();};
+    md.appendChild(b);
+  });
+}
+function moveWeek(dir){
+  const ms=moveState;
+  if(dir<0){if(ms.vw===1){ms.vy--;ms.vw=maxW(ms.vy);}else ms.vw--;}
+  else{if(ms.vw===maxW(ms.vy)){ms.vy++;ms.vw=1;}else ms.vw++;}
+  renderMoveDays();
+}
 function doMove(copy){
-  if(!moveState.targetDay){closeModal("moveModal");return;}
-  const k=wk(S.wy,S.wn);
-  const srcList=S.allW[k][moveState.srcDay][moveState.srcTab];
-  const todo=srcList.find(t=>t.id===moveState.id);if(!todo){closeModal("moveModal");return;}
-  const newTodo={...todo,id:Date.now()+Math.random(),co:false};
-  S.allW[k][moveState.targetDay][moveState.srcTab].push(newTodo);
-  if(!copy){dismiss(k,moveState.srcDay,moveState.srcTab,[todo]);S.allW[k][moveState.srcDay][moveState.srcTab]=srcList.filter(t=>t.id!==todo.id);}
+  const ms=moveState;
+  if(!ms.targetDay){closeModal("moveModal");return;}
+  const sk=wk(ms.srcY,ms.srcW),tk=wk(ms.ty,ms.tw);
+  if(sk===tk&&ms.srcDay===ms.targetDay){closeModal("moveModal");return;}
+  const srcList=S.allW[sk][ms.srcDay][ms.srcTab];
+  const todo=srcList.find(t=>t.id===ms.id);if(!todo){closeModal("moveModal");return;}
+  if(!S.allW[tk])S.allW[tk]=emptyW();
+  S.allW[tk][ms.targetDay][ms.srcTab].push({...todo,id:Date.now()+Math.random(),co:false});
+  if(!copy){dismiss(sk,ms.srcDay,ms.srcTab,[todo]);S.allW[sk][ms.srcDay][ms.srcTab]=srcList.filter(t=>t.id!==todo.id);}
   save();closeModal("moveModal");render();
 }
 function showMgmt(){document.getElementById("mgmtModal").classList.remove("hidden");}
@@ -478,6 +505,14 @@ async function importInbox(){
   });
   if(n){try{localStorage.setItem(IK,JSON.stringify([...seen]));}catch(_){}save();render();}
 }
+function refreshToday(){
+  const n=new Date();if(n.toDateString()===now.toDateString())return;
+  now=n;tIdx=n.getDay()===0?6:n.getDay()-1;cW=isoWeek(n);cY=n.getFullYear();
+  S.wn=cW;S.wy=cY;S.day=DAYS[tIdx];render();
+}
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){refreshToday();importInbox();}});
+window.addEventListener("focus",refreshToday);
+setInterval(refreshToday,60000);
 load();render();importInbox();
 </script>
 </body>
