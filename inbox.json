@@ -111,6 +111,20 @@
       "tab": "I",
       "pri": "yellow",
       "text": "Destek programı webinar kaydını izle, gerekli belgeyi yönetici şirketten talep et"
+    },
+    {
+      "id": "2026-10-27-001",
+      "date": "2026-10-27",
+      "tab": "I",
+      "pri": "yellow",
+      "text": "Cumartesi öncesi bekleyen ihracat/gümrük işlemlerini kontrol et, kapanış için gerekli adımları tamamla"
+    },
+    {
+      "id": "2026-10-27-002",
+      "date": "2026-10-27",
+      "tab": "P",
+      "pri": "green",
+      "text": "Gelen e-arşiv faturayı kontrol et ve dosyala"
     }
   ],
   "commands": [
