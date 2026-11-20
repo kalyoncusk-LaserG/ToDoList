@@ -160,6 +160,16 @@
       "tab": "I",
       "pri": "red",
       "text": "Vadesi bugün olan vergi tahakkuk ödemesini yap ve belgeleri dosyala"
+    },
+    {
+      "id": "2026-11-20-001",
+      "date": "2026-11-20",
+      "tab": "I",
+      "pri": "green",
+      "text": "Elektronik imza servisinde bekleyen imza görevlerini tamamla",
+      "subs": [
+        "Son tarihe iki hafta var"
+      ]
     }
   ],
   "commands": [
