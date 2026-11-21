@@ -170,6 +170,13 @@
       "subs": [
         "Son tarihe iki hafta var"
       ]
+    },
+    {
+      "id": "2026-11-21-001",
+      "date": "2026-11-21",
+      "tab": "I",
+      "pri": "red",
+      "text": "Yarınki planlı elektrik kesintisi için cihaz kapatma ve veri yedekleme önlemlerini bugün tamamla"
     }
   ],
   "commands": [
