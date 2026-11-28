@@ -191,6 +191,30 @@
       "tab": "I",
       "pri": "green",
       "text": "Teknokent bilgilendirme etkinliği için isteğe bağlı kayıt yap"
+    },
+    {
+      "id": "2026-11-28-001",
+      "date": "2026-11-28",
+      "tab": "I",
+      "pri": "yellow",
+      "text": "Gelecek hafta Çarşamba yüz yüze yeşil dönüşüm destek bilgilendirme gününe kayıt ol",
+      "subs": [
+        "Son ön başvuru tarihi gelecek haftaya denk geliyor"
+      ]
+    },
+    {
+      "id": "2026-11-28-002",
+      "date": "2026-11-28",
+      "tab": "P",
+      "pri": "yellow",
+      "text": "Gelen su faturasını gelecek hafta başında öde"
+    },
+    {
+      "id": "2026-11-28-003",
+      "date": "2026-11-28",
+      "tab": "P",
+      "pri": "green",
+      "text": "Gelen e-arşiv servis faturasını kontrol et ve dosyala"
     }
   ],
   "commands": [
